@@ -6,9 +6,7 @@ import {
   FunnelIcon,
   CheckCircleIcon,
   ClockIcon,
-  TrashIcon,
-  PencilIcon,
-  CalendarIcon
+  TrashIcon
 } from '@heroicons/react/24/outline';
 import { useApp } from '../../context/AppContext';
 import TaskForm from './TaskForm';
