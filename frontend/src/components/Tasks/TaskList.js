@@ -55,14 +55,6 @@ const TaskList = () => {
     );
   };
 
-  const handleSelectAll = () => {
-    if (selectedTasks.length === filteredTasks.length) {
-      setSelectedTasks([]);
-    } else {
-      setSelectedTasks(filteredTasks.map(task => task._id));
-    }
-  };
-
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {

@@ -50,7 +50,7 @@ const Signup = () => {
       newErrors.email = 'Please enter a valid email';
     }
 
-    if (formData.phone && !/^\+?[\d\s\-\(\)]+$/.test(formData.phone)) {
+    if (formData.phone && !/^\+?[\d\s\-()]+$/.test(formData.phone)) {
       newErrors.phone = 'Please enter a valid phone number';
     }
 
