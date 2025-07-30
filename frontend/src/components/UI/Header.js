@@ -16,22 +16,18 @@ import { useApp } from '../../context/AppContext';
 const Header = () => {
   const { activePage, setActivePage, isAuthenticated, user, logout } = useApp();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isGetStartedOpen, setIsGetStartedOpen] = useState(false);
+  const [authDropdownOpen, setAuthDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  // Close dropdown when clicking outside
+  // Outside click for dropdown
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsGetStartedOpen(false);
-      }
+    if (!authDropdownOpen) return;
+    const handle = e => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) setAuthDropdownOpen(false);
     };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
+    document.addEventListener('mousedown', handle);
+    return () => document.removeEventListener('mousedown', handle);
+  }, [authDropdownOpen]);
 
   const navigationItems = [
     { id: 'dashboard', label: 'Home', icon: HomeIcon },
@@ -40,602 +36,408 @@ const Header = () => {
     { id: 'contact', label: 'Contact', icon: UserIcon }
   ];
 
-  const authItems = isAuthenticated 
-    ? [
-        { id: 'profile', label: user?.name || 'Profile', icon: UserIcon },
-        { id: 'logout', label: 'Logout', icon: 'ArrowRightOnRectangleIcon', action: logout }
-      ]
-    : [
-        { id: 'get-started', label: 'Get Started', icon: UserPlusIcon, isGetStarted: true }
-      ];
-
-  const handleNavClick = (item) => {
-    if (item.action) {
-      item.action();
-    } else if (item.isGetStarted) {
-      setIsGetStartedOpen(!isGetStartedOpen);
-    } else {
-      setActivePage(item.id);
-    }
-    setIsMobileMenuOpen(false); // Close mobile menu when navigating
-  };
+  // User/auth section: avatar dropdown if authenticated
+  const authSection = isAuthenticated ? (
+    <div className="auth-menu" ref={dropdownRef}>
+      <motion.button
+        className="avatar-btn"
+        onClick={() => setAuthDropdownOpen(v => !v)}
+        whileTap={{ scale: 0.95 }}
+      >
+        <span className="avatar">{user?.name?.[0]?.toUpperCase() || "U"}</span>
+        <ChevronDownIcon className={`chev ${authDropdownOpen ? 'flip' : ''}`} />
+      </motion.button>
+      <AnimatePresence>
+        {authDropdownOpen && (
+          <motion.div
+            className="dropdown"
+            initial={{ opacity: 0, scale: 0.98, y: -8 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.98, y: -8 }}
+            transition={{ duration: 0.15 }}
+          >
+            <button className="drop-link" onClick={() => { setActivePage('profile'); setAuthDropdownOpen(false); }}>
+              <UserIcon className="w-4 h-4" />
+              <span>Profile</span>
+            </button>
+            <button className="drop-link" onClick={() => { logout(); setAuthDropdownOpen(false); }}>
+              <ArrowRightOnRectangleIcon className="w-4 h-4" />
+              <span>Logout</span>
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  ) : (
+    <div className="auth-menu" ref={dropdownRef}>
+      <motion.button
+        className="cta-btn"
+        onClick={() => setAuthDropdownOpen(v => !v)}
+        whileTap={{ scale: 0.95 }}
+      >
+        <UserPlusIcon className="w-4 h-4" />
+        <span>Get Started</span>
+        <ChevronDownIcon className={`chev ${authDropdownOpen ? 'flip' : ''}`} />
+      </motion.button>
+      <AnimatePresence>
+        {authDropdownOpen && (
+          <motion.div
+            className="dropdown"
+            initial={{ opacity: 0, scale: 0.98, y: -8 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.98, y: -8 }}
+            transition={{ duration: 0.15 }}
+          >
+            <button className="drop-link" onClick={() => { setActivePage('login'); setAuthDropdownOpen(false); }}>
+              <UserIcon className="w-4 h-4" />
+              <span>Log in</span>
+            </button>
+            <button className="drop-link" onClick={() => { setActivePage('signup'); setAuthDropdownOpen(false); }}>
+              <UserPlusIcon className="w-4 h-4" />
+              <span>Sign Up</span>
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
 
   return (
-    <motion.header 
-      className="header"
-      initial={{ y: -100, opacity: 0 }}
+    <motion.header
+      className="header-modern"
+      initial={{ y: -32, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.5 }}
+      transition={{ duration: 0.35 }}
     >
-      <nav className="navbar">
-        <div className="container">
-          <div className="navbar-content">
-            {/* Logo/Brand - Clean Professional Style */}
-            <motion.div 
-              className="navbar-brand"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => setActivePage('dashboard')}
+      <nav className="nav-modern">
+        <div className="nav-inner">
+          <div tabIndex={0} role="button" className="brand" onClick={() => setActivePage('dashboard')}>
+            <span className="brand-accent">project</span>
+            <span className="brand-main">manager</span>
+          </div>
+          <div className="nav-section desktop-nav" style={{ marginLeft: 'auto', marginRight: '2rem' }}>
+            {navigationItems.map(item => {
+              const Icon = item.icon;
+              return (
+                <motion.button
+                  key={item.id}
+                  className={`nav-link-modern ${activePage === item.id ? 'active' : ''}`}
+                  onClick={() => setActivePage(item.id)}
+                  whileHover={{ y: -1 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <Icon className="w-5 h-5" />
+                  <span>{item.label}</span>
+                  <span className="bar" aria-hidden />
+                </motion.button>
+              );
+            })}
+          </div>
+          <div className="nav-section">
+            {authSection}
+          </div>
+          {/* Mobile burger */}
+          <motion.button
+            className="burger mobile-only"
+            onClick={() => setIsMobileMenuOpen(v => !v)}
+            whileTap={{ scale: 0.95 }}
+            aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+          >
+            {isMobileMenuOpen ? <XMarkIcon className="w-8 h-8" /> : <Bars3Icon className="w-8 h-8" />}
+          </motion.button>
+        </div>
+        {/* Mobile Menu */}
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <motion.div
+              className="mob-sheet"
+              initial={{ y: -20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: -20, opacity: 0 }}
+              transition={{ duration: 0.22 }}
             >
-              <div className="brand-logo">
-                <span className="logo-accent">project management </span>
-              </div>
-            </motion.div>
-
-            {/* Navigation Links + Auth Section - All on Right */}
-            <div className="navbar-right">
-              {/* Navigation Links */}
-              <div className="navbar-nav">
-                {navigationItems.map((item) => {
+              <div className="mob-links">
+                {navigationItems.map(item => {
                   const Icon = item.icon;
                   return (
                     <motion.button
                       key={item.id}
-                      className={`nav-link ${activePage === item.id ? 'active' : ''}`}
-                      onClick={() => handleNavClick(item)}
-                      whileHover={{ y: -2 }}
+                      className={`mob-link ${activePage === item.id ? 'active' : ''}`}
+                      onClick={() => { setActivePage(item.id); setIsMobileMenuOpen(false); }}
                       whileTap={{ scale: 0.98 }}
                     >
                       <Icon className="w-5 h-5" />
-                      {item.label}
-                    </motion.button>
-                  );
-                })}
-              </div>
-
-              {/* Auth Section */}
-              <div className="navbar-auth desktop-only">
-                {authItems.map((item, index) => {
-                  const Icon = item.icon;
-                  const isLogout = item.id === 'logout';
-                  const isGetStarted = item.isGetStarted;
-                  
-                  if (isGetStarted) {
-                    return (
-                      <div key={item.id} className="get-started-container" ref={dropdownRef}>
-                        <motion.button
-                          className="auth-link get-started-btn"
-                          onClick={() => handleNavClick(item)}
-                          whileHover={{ y: -2 }}
-                          whileTap={{ scale: 0.96 }}
-                          initial={{ opacity: 0, x: 20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: index * 0.1 }}
-                        >
-                          <Icon className="w-4 h-4" />
-                          <span>{item.label}</span>
-                          <ChevronDownIcon className={`w-4 h-4 transition-transform ${isGetStartedOpen ? 'rotate-180' : ''}`} />
-                        </motion.button>
-                        
-                        <AnimatePresence>
-                          {isGetStartedOpen && (
-                            <motion.div
-                              className="get-started-dropdown"
-                              initial={{ opacity: 0, y: -10 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              exit={{ opacity: 0, y: -10 }}
-                              transition={{ duration: 0.2 }}
-                            >
-                              <motion.button
-                                className="dropdown-item"
-                                onClick={() => {
-                                  setActivePage('login');
-                                  setIsGetStartedOpen(false);
-                                }}
-                                whileHover={{ x: 4 }}
-                              >
-                                <UserIcon className="w-4 h-4" />
-                                <span>Login</span>
-                              </motion.button>
-                              <motion.button
-                                className="dropdown-item"
-                                onClick={() => {
-                                  setActivePage('signup');
-                                  setIsGetStartedOpen(false);
-                                }}
-                                whileHover={{ x: 4 }}
-                              >
-                                <UserPlusIcon className="w-4 h-4" />
-                                <span>Sign Up</span>
-                              </motion.button>
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-                      </div>
-                    );
-                  }
-                  
-                  return (
-                    <motion.button
-                      key={item.id}
-                      className={`auth-link ${activePage === item.id ? 'active' : ''} ${isLogout ? 'logout-btn' : ''}`}
-                      onClick={() => handleNavClick(item)}
-                      whileHover={{ y: -2 }}
-                      whileTap={{ scale: 0.96 }}
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                    >
-                      <Icon className="w-4 h-4" />
                       <span>{item.label}</span>
                     </motion.button>
                   );
                 })}
               </div>
-            </div>
-
-            {/* Mobile Menu Toggle */}
-            <motion.button
-              className="mobile-menu-toggle mobile-only"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              whileTap={{ scale: 0.95 }}
-            >
-              {isMobileMenuOpen ? (
-                <XMarkIcon className="w-6 h-6" />
-              ) : (
-                <Bars3Icon className="w-6 h-6" />
-              )}
-            </motion.button>
-          </div>
-
-          {/* Mobile Menu */}
-          <AnimatePresence>
-            {isMobileMenuOpen && (
-              <motion.div
-                className="mobile-menu mobile-only"
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                <div className="mobile-menu-content">
-                  {/* Mobile Auth Section */}
-                  <div className="mobile-auth-section">
-                    {isAuthenticated ? (
-                      authItems.map((item) => {
-                        const Icon = item.icon;
-                        const isLogout = item.id === 'logout';
-                        return (
-                          <motion.button
-                            key={item.id}
-                            className={`mobile-auth-link ${activePage === item.id ? 'active' : ''} ${isLogout ? 'logout-btn' : ''}`}
-                            onClick={() => handleNavClick(item)}
-                            whileHover={{ x: 4 }}
-                            whileTap={{ scale: 0.98 }}
-                          >
-                            <Icon className="w-5 h-5" />
-                            <span>{item.label}</span>
-                          </motion.button>
-                        );
-                      })
-                    ) : (
-                      <>
-                        <motion.button
-                          className="mobile-auth-link"
-                          onClick={() => {
-                            setActivePage('login');
-                            setIsMobileMenuOpen(false);
-                          }}
-                          whileHover={{ x: 4 }}
-                          whileTap={{ scale: 0.98 }}
-                        >
-                          <UserIcon className="w-5 h-5" />
-                          <span>Login</span>
-                        </motion.button>
-                        <motion.button
-                          className="mobile-auth-link signup-btn"
-                          onClick={() => {
-                            setActivePage('signup');
-                            setIsMobileMenuOpen(false);
-                          }}
-                          whileHover={{ x: 4 }}
-                          whileTap={{ scale: 0.98 }}
-                        >
-                          <UserPlusIcon className="w-5 h-5" />
-                          <span>Sign Up</span>
-                        </motion.button>
-                      </>
-                    )}
-                  </div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
+              <hr className="mob-divider" />
+              <div className="mob-auth">
+                {isAuthenticated ? (
+                  <>
+                    <motion.button className="mob-link" onClick={() => { setActivePage('profile'); setIsMobileMenuOpen(false); }}>
+                      <UserIcon className="w-5 h-5" />
+                      <span>Profile</span>
+                    </motion.button>
+                    <motion.button className="mob-link" onClick={() => { logout(); setIsMobileMenuOpen(false); }}>
+                      <ArrowRightOnRectangleIcon className="w-5 h-5" />
+                      <span>Logout</span>
+                    </motion.button>
+                  </>
+                ) : (
+                  <>
+                    <motion.button className="mob-link" onClick={() => { setActivePage('login'); setIsMobileMenuOpen(false); }}>
+                      <UserIcon className="w-5 h-5" />
+                      <span>Log in</span>
+                    </motion.button>
+                    <motion.button className="mob-link mob-cta" onClick={() => { setActivePage('signup'); setIsMobileMenuOpen(false); }}>
+                      <UserPlusIcon className="w-5 h-5" />
+                      <span>Get Started</span>
+                    </motion.button>
+                  </>
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </nav>
-
       <style jsx>{`
-        .header {
+        .header-modern {
           position: sticky;
           top: 0;
           z-index: 50;
-          background: #ffffff;
-          border-bottom: 1px solid #e5e7eb;
-          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+          background: #fff;
+          border-bottom: 1px solid #ececec;
+          box-shadow: 0 1px 8px 0 rgba(0,0,0,0.04);
+          min-height: 64px;
         }
-
-        .navbar {
-          padding: 0;
-        }
-
-        .container {
-          max-width: 1200px;
+        .nav-modern {
+          width: 100%;
+          max-width: 1140px;
           margin: 0 auto;
           padding: 0 0.5rem;
         }
-
-        .navbar-content {
+        .nav-inner {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          height: 60px;
-          margin-left: 500px;
+          height: 68px;
+          gap: 0.5rem;
         }
-
-        .navbar-right {
+        .brand {
+          display: flex;
+          font-size: 1.6rem;
+          font-weight: 800;
+          letter-spacing: -0.02em;
           align-items: center;
-          gap: 1rem;
-          margin-left: auto;
-          margin-right: 0;
-        }
-
-        .navbar-brand {
           cursor: pointer;
-          display: flex;
-          align-items: center;
-          margin-right: auto;
+          user-select: none;
         }
-
-        .brand-logo {
-          display: flex;
-          align-items: center;
-          font-size: 1.5rem;
-          font-weight: 600;
-        }
-
-        .logo-text {
-          color: #374151;
-          font-weight: 600;
-        }
-
-        .logo-accent {
+        .brand-accent {
           color: #dc2626;
-          font-weight: 600;
         }
-
-        .navbar-nav {
-          display: flex;
-          align-items: center;
-          gap: 0;
-          flex-direction: row;
-          margin-right: 0;
+        .brand-main {
+          color: #222;
+          margin-left: 4px;
         }
-
-        .nav-link {
+        .nav-section {
           display: flex;
           align-items: center;
           gap: 0.5rem;
-          padding: 0.75rem 1rem;
+        }
+
+        .nav-link-modern {
           background: none;
           border: none;
-          color: #6b7280;
-          font-weight: 400;
-          font-size: 0.95rem;
-          cursor: pointer;
-          transition: all 0.2s ease;
-          text-decoration: none;
-          white-space: nowrap;
-          height: 60px;
-          border-bottom: 3px solid transparent;
-        }
-
-        .nav-link:hover {
-          color: #374151;
-          background-color: #f9fafb;
-        }
-
-        .nav-link.active {
-          color: #dc2626;
-          border-bottom-color: #dc2626;
-          background-color: #fef2f2;
-        }
-
-        .navbar-auth {
-          display: flex;
-          align-items: center;
-          gap: 0.75rem;
-        }
-
-        .auth-link {
+          outline: none;
+          font: inherit;
+          color: #475569;
+          padding: 0 0.5rem;
+          font-size: 1rem;
           display: flex;
           align-items: center;
           gap: 0.5rem;
-          padding: 0.5rem 1.25rem;
-          border-radius: 6px;
-          background: none;
-          border: 1px solid #d1d5db;
-          color: #374151;
-          font-weight: 500;
-          font-size: 0.875rem;
-          cursor: pointer;
-          transition: all 0.2s ease;
-          text-decoration: none;
-          white-space: nowrap;
-        }
-
-        .auth-link:hover {
-          background-color: #f9fafb;
-          border-color: #9ca3af;
-        }
-
-        .auth-link.signup-btn {
-          background: #dc2626;
-          color: white;
-          border-color: #dc2626;
-          font-weight: 600;
-        }
-
-        .auth-link.signup-btn:hover {
-          background: #b91c1c;
-          border-color: #b91c1c;
-        }
-
-        .auth-link.get-started-btn {
-          background: #dc2626;
-          color: white;
-          border-color: #dc2626;
-          font-weight: 600;
-        }
-
-        .auth-link.get-started-btn:hover {
-          background: #b91c1c;
-          border-color: #b91c1c;
-        }
-
-        .auth-link.logout-btn:hover {
-          color: #dc2626;
-          border-color: #dc2626;
-          background-color: #fef2f2;
-        }
-
-        /* Get Started Dropdown Styles */
-        .get-started-container {
           position: relative;
-        }
-
-        .get-started-dropdown {
-          position: absolute;
-          top: 100%;
-          right: 0;
-          margin-top: 0.5rem;
-          background: white;
-          border-radius: 8px;
-          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-          border: 1px solid #e5e7eb;
-          overflow: hidden;
-          min-width: 160px;
-          z-index: 1000;
-        }
-
-        .dropdown-item {
-          display: flex;
-          align-items: center;
-          gap: 0.75rem;
-          width: 100%;
-          padding: 0.75rem 1rem;
-          border: none;
-          background: none;
-          color: #374151;
-          font-weight: 400;
-          font-size: 0.875rem;
           cursor: pointer;
-          transition: all 0.2s ease;
-          text-align: left;
+          height: 44px;
+          transition: color 0.15s cubic-bezier(.4,0,.2,1);
         }
-
-        .dropdown-item:hover {
-          background-color: #f9fafb;
+        .nav-link-modern .bar {
+          display: block;
+          height: 2.5px;
+          width: 0;
+          position: absolute;
+          left: 50%;
+          bottom: -2px;
+          background: #dc2626;
+          border-radius: 2px;
+          transition: width 0.2s, left 0.2s;
+        }
+        .nav-link-modern.active .bar {
+          width: 70%;
+          left: 15%;
+        }
+        .nav-link-modern.active, .nav-link-modern:focus-visible {
           color: #dc2626;
         }
-
-        .dropdown-item:not(:last-child) {
-          border-bottom: 1px solid #f3f4f6;
+        .nav-link-modern:hover:not(.active) {
+          color: #222;
+          background: #f5f5f5;
         }
 
-        /* Mobile Menu Styles */
-        .mobile-menu-toggle {
-          display: none;
+        /* Auth section */
+        .auth-row {
+          display: flex;
+          gap: 0.5rem;
+        }
+        .text-btn {
+          border: none;
+          background: none;
+          color: #475569;
+          font-weight: 500;
+          font-size: 1rem;
+          padding: 0 0.7rem;
+          border-radius: 5px;
+          transition: background 0.13s;
+          cursor: pointer;
+        }
+        .text-btn:hover {
+          background: #f3f4f6;
+          color: #222;
+        }
+        .cta-btn {
+          background: #dc2626;
+          color: #fff;
+          border: none;
+          font-weight: bold;
+          font-size: 1rem;
+          padding: 0.5rem 1.12rem;
+          border-radius: 6px;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          box-shadow: 0 1px 2px 0 rgba(220,38,38,0.1);
+          transition: background 0.18s;
+          cursor: pointer;
+        }
+        .cta-btn:hover { background: #b91c1c; }
+        /* Avatar w/ dropdown */
+        .auth-menu { position: relative; }
+        .avatar-btn {
+          background: none;
+          border: none;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          cursor: pointer;
+          font-size: 1rem;
+          padding: 0.15rem 0.65rem;
+          border-radius: 5px;
+          transition: background .13s;
+        }
+        .avatar-btn:hover { background: #f9fafb; }
+        .avatar {
+          display: flex;
+          width: 2rem; height: 2rem;
+          background: #fee2e2;
+          color: #dc2626;
           align-items: center;
           justify-content: center;
-          width: 2.5rem;
-          height: 2.5rem;
-          border: 1px solid #d1d5db;
-          background: white;
-          color: #6b7280;
-          cursor: pointer;
-          border-radius: 6px;
-          transition: all 0.2s ease;
+          border-radius: 50%;
+          font-weight: bold;
+          font-size: 1.1rem;
+          letter-spacing: 0.01em;
         }
-
-        .mobile-menu-toggle:hover {
-          background-color: #f9fafb;
-          border-color: #9ca3af;
+        .chev {
+          width: 1.2rem; height: 1.2rem;
+          transition: transform .17s;
         }
-
-        .mobile-menu {
-          overflow: hidden;
-          border-top: 1px solid #e5e7eb;
-          background: white;
-        }
-
-        .mobile-menu-content {
-          padding: 1rem 0;
-        }
-
-        .mobile-auth-section {
+        .chev.flip { transform: rotate(180deg);}
+        .dropdown {
+          position: absolute;
+          z-index: 99;
+          right: 0;
+          top: 120%;
+          background: #fff;
+          border-radius: 8px;
+          box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+          min-width: 172px;
+          padding: 0.4rem 0;
+          border: 1px solid #eee;
           display: flex;
           flex-direction: column;
-          gap: 0.5rem;
-          padding: 0 1rem;
+        }
+        .drop-link {
+          display: flex;
+          gap: 0.6rem;
+          align-items: center;
+          padding: 0.7rem 1.2rem;
+          background: none;
+          border: none;
+          color: #222;
+          font-size: 1rem;
+          transition: background .14s, color .14s;
+          cursor: pointer;
+        }
+        .drop-link:hover {
+          background: #f3f4f6;
+          color: #dc2626;
         }
 
-        .mobile-auth-link {
-          display: flex;
-          align-items: center;
-          gap: 0.75rem;
-          padding: 0.75rem 1rem;
-          border: none;
+        /* Burger/mobile menu */
+        .burger {
+          display: none;
           background: none;
-          color: #374151;
-          font-weight: 400;
-          font-size: 0.875rem;
-          cursor: pointer;
-          transition: all 0.2s ease;
-          text-align: left;
-          width: 100%;
+          border: none;
+          padding: 0.3rem 0.3rem;
+          align-items: center;
+          color: #222;
+        }
+        @media (max-width: 850px) {
+          .desktop-nav { display: none; }
+          .burger { display: flex; }
+          .nav-section:not(:first-child):not(:last-child){ display: none; }
+        }
+        /* Mobile sheet */
+        .mob-sheet {
+          position: absolute;
+          left: 0; right: 0;
+          top: 68px;
+          background: #fff;
+          border-bottom: 1.5px solid #f3f4f6;
+          box-shadow: 0 4px 32px 0 rgba(0,0,0,0.06);
+        }
+        .mob-links, .mob-auth {
+          display: flex;
+          flex-direction: column;
+        }
+        .mob-links { padding: 0.6rem 1.25rem 0.2rem;}
+        .mob-auth { padding: 0.4rem 1.25rem 1rem;gap:0.3rem;}
+        .mob-link {
+          display: flex;
+          gap: 0.6rem;
+          align-items: center;
+          padding: 0.9rem 0;
+          font-size: 1.07rem;
+          background: none;
+          border: none;
+          color: #444;
+          transition: background .14s, color .14s;
           border-radius: 6px;
         }
-
-        .mobile-auth-link:hover {
-          background-color: #f9fafb;
-        }
-
-        .mobile-auth-link.signup-btn {
+        .mob-link:active, .mob-link.active { background: #fef2f2; color: #dc2626;}
+        .mob-link.mob-cta {
           background: #dc2626;
-          color: white;
-          font-weight: 600;
-          margin-top: 0.5rem;
+          color: #fff;
+          font-weight: bold;
+          justify-content: center;
         }
-
-        .mobile-auth-link.signup-btn:hover {
-          background: #b91c1c;
-        }
-
-        .mobile-auth-link.logout-btn:hover {
-          color: #dc2626;
-          background-color: #fef2f2;
-        }
-
-        /* Responsive Utilities */
-        .desktop-only {
-          display: flex;
-        }
-
-        .mobile-only {
-          display: none;
-        }
-
-        /* Ensure horizontal layout on desktop */
-        @media (min-width: 769px) {
-          .navbar-nav {
-            display: flex !important;
-            flex-direction: row !important;
-            align-items: center;
-            gap: 0;
-          }
-          
-          .navbar-right {
-            display: flex !important;
-            align-items: center;
-            gap: 2rem;
-            margin-left: auto;
-            flex-direction: row !important;
-          }
-          
-          .navbar-brand {
-            margin-right: auto;
-          }
-        }
-
-        /* Mobile Responsive */
-        @media (max-width: 1024px) {
-          .container {
-            padding: 0 1.5rem;
-          }
-        }
-
-        @media (max-width: 768px) {
-          .desktop-only {
-            display: none;
-          }
-
-          .mobile-only {
-            display: flex;
-          }
-
-          .container {
-            padding: 0 1rem;
-          }
-
-          .navbar-content {
-            position: relative;
-          }
-
-          .navbar-right {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: white;
-            border-top: 1px solid #e5e7eb;
-            flex-direction: column;
-            gap: 0;
-            padding: 1rem 0;
-          }
-
-          .navbar-nav {
-            width: 100%;
-            flex-direction: column;
-            gap: 0;
-          }
-
-          .nav-link {
-            width: 100%;
-            justify-content: flex-start;
-            padding: 1rem 1.5rem;
-            border-bottom: none;
-            height: auto;
-          }
-
-          .nav-link.active {
-            background-color: #fef2f2;
-            border-left: 3px solid #dc2626;
-            border-bottom: none;
-          }
-
-          .nav-link:hover {
-            background-color: #f9fafb;
-          }
-        }
-
-        @media (max-width: 480px) {
-          .container {
-            padding: 0 0.75rem;
-          }
-
-          .brand-logo {
-            font-size: 1.25rem;
-          }
+        .mob-link.mob-cta:active, .mob-link.mob-cta:focus { background: #b91c1c; }
+        .mob-divider { border: none; border-top: 1.2px solid #f3f4f6; width:90%;margin: 0.55rem auto 0.2rem; }
+        /* Mobile overrides */
+        @media (max-width: 520px) {
+          .nav-modern { padding: 0 0.7rem;}
         }
       `}</style>
     </motion.header>
