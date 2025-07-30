@@ -13,22 +13,25 @@ import { useApp } from '../context/AppContext';
 const Dashboard = () => {
   const { tasks, setActivePage } = useApp();
 
+  // Add safety check for tasks
+  const safeTasks = tasks || [];
+
   // Calculate statistics
-  const totalTasks = tasks.length;
-  const completedTasks = tasks.filter(task => task.isDone).length;
+  const totalTasks = safeTasks.length;
+  const completedTasks = safeTasks.filter(task => task.isDone).length;
   const pendingTasks = totalTasks - completedTasks;
-  const highPriorityTasks = tasks.filter(task => task.priority === 'High' && !task.isDone).length;
+  const highPriorityTasks = safeTasks.filter(task => task.priority === 'High' && !task.isDone).length;
   const completionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 
   // Get overdue tasks (simplified - checking if due date is past)
   const today = new Date();
-  const overdueTasks = tasks.filter(task => {
+  const overdueTasks = safeTasks.filter(task => {
     if (!task.dueDate || task.isDone) return false;
     return new Date(task.dueDate) < today;
   }).length;
 
   // Get recent tasks (last 5)
-  const recentTasks = tasks
+  const recentTasks = safeTasks
     .sort((a, b) => new Date(b.createdAt || Date.now()) - new Date(a.createdAt || Date.now()))
     .slice(0, 5);
 

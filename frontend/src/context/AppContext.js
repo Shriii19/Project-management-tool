@@ -152,8 +152,10 @@ export const AppProvider = ({ children }) => {
     dispatch({ type: ACTIONS.SET_LOADING, payload: true });
     try {
       const { data } = await GetAllTasks();
-      dispatch({ type: ACTIONS.SET_TASKS, payload: data });
+      dispatch({ type: ACTIONS.SET_TASKS, payload: data || [] });
     } catch (error) {
+      // Ensure tasks is always an array, even on error
+      dispatch({ type: ACTIONS.SET_TASKS, payload: [] });
       dispatch({ type: ACTIONS.SET_ERROR, payload: 'Failed to fetch tasks' });
       notify('Failed to fetch tasks', 'error');
     } finally {
@@ -216,7 +218,13 @@ export const useApp = () => {
   if (!context) {
     throw new Error('useApp must be used within an AppProvider');
   }
-  return context;
+  
+  // Ensure tasks is always an array
+  return {
+    ...context,
+    tasks: context.tasks || [],
+    filteredTasks: context.filteredTasks || []
+  };
 };
 
 export default AppContext;
