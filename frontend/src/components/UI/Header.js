@@ -281,7 +281,7 @@ const Header = () => {
         .container {
           max-width: 1200px;
           margin: 0 auto;
-          padding: 0 2rem;
+          padding: 0 0.5rem;
         }
 
         .navbar-content {
@@ -289,13 +289,14 @@ const Header = () => {
           align-items: center;
           justify-content: space-between;
           height: 60px;
+          margin-left: 500px;
         }
 
         .navbar-right {
-          display: flex;
           align-items: center;
-          gap: 2rem;
+          gap: 1rem;
           margin-left: auto;
+          margin-right: 0;
         }
 
         .navbar-brand {
@@ -327,14 +328,14 @@ const Header = () => {
           align-items: center;
           gap: 0;
           flex-direction: row;
+          margin-right: 0;
         }
 
         .nav-link {
           display: flex;
-          margin -left: auto;
           align-items: center;
           gap: 0.5rem;
-          padding: 0.75rem 1.5rem;
+          padding: 0.75rem 1rem;
           background: none;
           border: none;
           color: #6b7280;
