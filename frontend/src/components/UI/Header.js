@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   HomeIcon, 
@@ -8,13 +8,30 @@ import {
   UserPlusIcon,
   ArrowRightOnRectangleIcon,
   Bars3Icon,
-  XMarkIcon
+  XMarkIcon,
+  ChevronDownIcon
 } from '@heroicons/react/24/outline';
 import { useApp } from '../../context/AppContext';
 
 const Header = () => {
   const { activePage, setActivePage, isAuthenticated, user, logout } = useApp();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isGetStartedOpen, setIsGetStartedOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsGetStartedOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const navigationItems = [
     { id: 'dashboard', label: 'Dashboard', icon: HomeIcon },
@@ -28,13 +45,14 @@ const Header = () => {
         { id: 'logout', label: 'Logout', icon: ArrowRightOnRectangleIcon, action: logout }
       ]
     : [
-        { id: 'login', label: 'Login', icon: UserIcon },
-        { id: 'signup', label: 'Sign Up', icon: UserPlusIcon }
+        { id: 'get-started', label: 'Get Started', icon: UserPlusIcon, isGetStarted: true }
       ];
 
   const handleNavClick = (item) => {
     if (item.action) {
       item.action();
+    } else if (item.isGetStarted) {
+      setIsGetStartedOpen(!isGetStartedOpen);
     } else {
       setActivePage(item.id);
     }
@@ -93,11 +111,67 @@ const Header = () => {
               {authItems.map((item, index) => {
                 const Icon = item.icon;
                 const isLogout = item.id === 'logout';
-                const isSignup = item.id === 'signup';
+                const isGetStarted = item.isGetStarted;
+                
+                if (isGetStarted) {
+                  return (
+                    <div key={item.id} className="get-started-container" ref={dropdownRef}>
+                      <motion.button
+                        className="auth-link get-started-btn"
+                        onClick={() => handleNavClick(item)}
+                        whileHover={{ y: -2 }}
+                        whileTap={{ scale: 0.96 }}
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.1 }}
+                      >
+                        <Icon className="w-4 h-4" />
+                        <span>{item.label}</span>
+                        <ChevronDownIcon className={`w-4 h-4 transition-transform ${isGetStartedOpen ? 'rotate-180' : ''}`} />
+                      </motion.button>
+                      
+                      <AnimatePresence>
+                        {isGetStartedOpen && (
+                          <motion.div
+                            className="get-started-dropdown"
+                            initial={{ opacity: 0, y: -10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            transition={{ duration: 0.2 }}
+                          >
+                            <motion.button
+                              className="dropdown-item"
+                              onClick={() => {
+                                setActivePage('login');
+                                setIsGetStartedOpen(false);
+                              }}
+                              whileHover={{ x: 4 }}
+                            >
+                              <UserIcon className="w-4 h-4" />
+                              <span>Login</span>
+                            </motion.button>
+                            <motion.button
+                              className="dropdown-item"
+                              onClick={() => {
+                                setActivePage('signup');
+                                setIsGetStartedOpen(false);
+                              }}
+                              whileHover={{ x: 4 }}
+                            >
+                              <UserPlusIcon className="w-4 h-4" />
+                              <span>Sign Up</span>
+                            </motion.button>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  );
+                }
+                
                 return (
                   <motion.button
                     key={item.id}
-                    className={`auth-link ${activePage === item.id ? 'active' : ''} ${isSignup ? 'signup-btn' : ''} ${isLogout ? 'logout-btn' : ''}`}
+                    className={`auth-link ${activePage === item.id ? 'active' : ''} ${isLogout ? 'logout-btn' : ''}`}
                     onClick={() => handleNavClick(item)}
                     whileHover={{ y: -2 }}
                     whileTap={{ scale: 0.96 }}
@@ -139,23 +213,51 @@ const Header = () => {
                 <div className="mobile-menu-content">
                   {/* Mobile Auth Section */}
                   <div className="mobile-auth-section">
-                    {authItems.map((item) => {
-                      const Icon = item.icon;
-                      const isLogout = item.id === 'logout';
-                      const isSignup = item.id === 'signup';
-                      return (
+                    {isAuthenticated ? (
+                      authItems.map((item) => {
+                        const Icon = item.icon;
+                        const isLogout = item.id === 'logout';
+                        return (
+                          <motion.button
+                            key={item.id}
+                            className={`mobile-auth-link ${activePage === item.id ? 'active' : ''} ${isLogout ? 'logout-btn' : ''}`}
+                            onClick={() => handleNavClick(item)}
+                            whileHover={{ x: 4 }}
+                            whileTap={{ scale: 0.98 }}
+                          >
+                            <Icon className="w-5 h-5" />
+                            <span>{item.label}</span>
+                          </motion.button>
+                        );
+                      })
+                    ) : (
+                      <>
                         <motion.button
-                          key={item.id}
-                          className={`mobile-auth-link ${activePage === item.id ? 'active' : ''} ${isSignup ? 'signup-btn' : ''} ${isLogout ? 'logout-btn' : ''}`}
-                          onClick={() => handleNavClick(item)}
+                          className="mobile-auth-link"
+                          onClick={() => {
+                            setActivePage('login');
+                            setIsMobileMenuOpen(false);
+                          }}
                           whileHover={{ x: 4 }}
                           whileTap={{ scale: 0.98 }}
                         >
-                          <Icon className="w-5 h-5" />
-                          <span>{item.label}</span>
+                          <UserIcon className="w-5 h-5" />
+                          <span>Login</span>
                         </motion.button>
-                      );
-                    })}
+                        <motion.button
+                          className="mobile-auth-link signup-btn"
+                          onClick={() => {
+                            setActivePage('signup');
+                            setIsMobileMenuOpen(false);
+                          }}
+                          whileHover={{ x: 4 }}
+                          whileTap={{ scale: 0.98 }}
+                        >
+                          <UserPlusIcon className="w-5 h-5" />
+                          <span>Sign Up</span>
+                        </motion.button>
+                      </>
+                    )}
                   </div>
                 </div>
               </motion.div>
@@ -244,18 +346,19 @@ const Header = () => {
         .navbar-nav {
           display: flex;
           align-items: center;
-          gap: 0.25rem;
+          gap: 0.5rem;
           background: rgba(248, 250, 252, 0.8);
-          padding: 0.375rem;
+          padding: 0.5rem;
           border-radius: 16px;
           border: 1px solid rgba(0, 0, 0, 0.06);
+          backdrop-filter: blur(10px);
         }
 
         .nav-link {
           display: flex;
           align-items: center;
-          gap: 0.625rem;
-          padding: 0.625rem 1.25rem;
+          gap: 0.75rem;
+          padding: 0.75rem 1.5rem;
           border-radius: 12px;
           background: none;
           border: none;
@@ -263,9 +366,10 @@ const Header = () => {
           font-weight: 500;
           font-size: 0.875rem;
           cursor: pointer;
-          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           position: relative;
           white-space: nowrap;
+          min-height: 44px;
         }
 
         .nav-link:hover {
@@ -337,6 +441,66 @@ const Header = () => {
           color: #ef4444;
           border-color: rgba(239, 68, 68, 0.3);
           background-color: rgba(239, 68, 68, 0.1);
+        }
+
+        /* Get Started Dropdown Styles */
+        .get-started-container {
+          position: relative;
+        }
+
+        .auth-link.get-started-btn {
+          background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+          color: white;
+          border: none;
+          font-weight: 600;
+          box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+          gap: 0.5rem;
+        }
+
+        .auth-link.get-started-btn:hover {
+          background: linear-gradient(135deg, #1d4ed8, #1e40af);
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+          color: white;
+        }
+
+        .get-started-dropdown {
+          position: absolute;
+          top: 100%;
+          right: 0;
+          margin-top: 0.5rem;
+          background: white;
+          border-radius: 12px;
+          box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+          border: 1px solid rgba(0, 0, 0, 0.08);
+          overflow: hidden;
+          min-width: 160px;
+          z-index: 1000;
+        }
+
+        .dropdown-item {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          width: 100%;
+          padding: 0.875rem 1.25rem;
+          border: none;
+          background: none;
+          color: #64748b;
+          font-weight: 500;
+          font-size: 0.875rem;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          text-align: left;
+        }
+
+        .dropdown-item:hover {
+          color: #3b82f6;
+          background-color: rgba(59, 130, 246, 0.05);
+        }
+
+        .dropdown-item:not(:last-child) {
+          border-bottom: 1px solid rgba(0, 0, 0, 0.05);
         }
 
         /* Mobile Menu Styles */
@@ -449,7 +613,7 @@ const Header = () => {
           }
 
           .navbar {
-            padding: 0.5rem 0 0;
+            padding: 0.75rem 0 0;
           }
           
           .navbar-content {
@@ -459,26 +623,30 @@ const Header = () => {
           .navbar-center {
             order: 2;
             max-width: 100%;
+            margin-bottom: 0.75rem;
           }
 
           .navbar-nav {
             width: 100%;
             justify-content: space-between;
-            padding: 0.5rem;
-            margin-bottom: 0.5rem;
+            padding: 0.375rem;
+            gap: 0.25rem;
           }
 
           .nav-link {
-            padding: 0.75rem 1rem;
+            padding: 0.75rem 0.75rem;
             flex-direction: column;
-            gap: 0.25rem;
+            gap: 0.375rem;
             text-align: center;
-            min-width: 70px;
+            min-width: 0;
+            flex: 1;
+            min-height: 60px;
           }
 
           .nav-link span {
             font-size: 0.75rem;
             line-height: 1;
+            font-weight: 500;
           }
 
           .brand-text span {
