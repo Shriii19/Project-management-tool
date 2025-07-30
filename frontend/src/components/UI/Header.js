@@ -43,7 +43,7 @@ const Header = () => {
   const authItems = isAuthenticated 
     ? [
         { id: 'profile', label: user?.name || 'Profile', icon: UserIcon },
-        { id: 'logout', label: 'Logout', icon: ArrowRightOnRectangleIcon, action: logout }
+        { id: 'logout', label: 'Logout', icon: 'ArrowRightOnRectangleIcon', action: logout }
       ]
     : [
         { id: 'get-started', label: 'Get Started', icon: UserPlusIcon, isGetStarted: true }
@@ -78,8 +78,7 @@ const Header = () => {
               onClick={() => setActivePage('dashboard')}
             >
               <div className="brand-logo">
-                <span className="logo-text">ace</span>
-                <span className="logo-accent">project</span>
+                <span className="logo-accent">project management </span>
               </div>
             </motion.div>
 
@@ -98,7 +97,7 @@ const Header = () => {
                       whileTap={{ scale: 0.98 }}
                     >
                       <Icon className="w-5 h-5" />
-                      <span>{item.label}</span>
+                      {item.label}
                     </motion.button>
                   );
                 })}
@@ -296,12 +295,14 @@ const Header = () => {
           display: flex;
           align-items: center;
           gap: 2rem;
+          margin-left: auto;
         }
 
         .navbar-brand {
           cursor: pointer;
           display: flex;
           align-items: center;
+          margin-right: auto;
         }
 
         .brand-logo {
@@ -325,10 +326,12 @@ const Header = () => {
           display: flex;
           align-items: center;
           gap: 0;
+          flex-direction: row;
         }
 
         .nav-link {
           display: flex;
+          margin -left: auto;
           align-items: center;
           gap: 0.5rem;
           padding: 0.75rem 1.5rem;
@@ -539,6 +542,28 @@ const Header = () => {
 
         .mobile-only {
           display: none;
+        }
+
+        /* Ensure horizontal layout on desktop */
+        @media (min-width: 769px) {
+          .navbar-nav {
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: center;
+            gap: 0;
+          }
+          
+          .navbar-right {
+            display: flex !important;
+            align-items: center;
+            gap: 2rem;
+            margin-left: auto;
+            flex-direction: row !important;
+          }
+          
+          .navbar-brand {
+            margin-right: auto;
+          }
         }
 
         /* Mobile Responsive */
