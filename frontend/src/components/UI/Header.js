@@ -70,19 +70,19 @@ const Header = () => {
       <nav className="navbar">
         <div className="container">
           <div className="navbar-content">
-            {/* Logo/Brand - Terminal Style */}
+            {/* Logo/Brand - Modern Style */}
             <motion.div 
-              className="navbar-brand terminal-style"
+              className="navbar-brand"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => setActivePage('dashboard')}
             >
-              <div className="terminal-icon">
-                <span className="terminal-cursor">►</span>
-                <span className="terminal-underscore">_</span>
+              <div className="brand-icon">
+                <ClipboardDocumentListIcon className="w-6 h-6" />
               </div>
               <div className="brand-text">
-                <h1>PM</h1>
+                <h1>ProjectManager</h1>
+                <span>Pro</span>
               </div>
             </motion.div>
 
@@ -273,13 +273,14 @@ const Header = () => {
           position: sticky;
           top: 0;
           z-index: 50;
-          background: #1a1a2e;
-          border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+          background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+          border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+          backdrop-filter: blur(20px);
         }
 
         .navbar {
-          padding: 0.75rem 0;
+          padding: 1rem 0;
         }
 
         .container {
@@ -307,78 +308,58 @@ const Header = () => {
         .navbar-brand {
           display: flex;
           align-items: center;
-          gap: 0.5rem;
+          gap: 0.75rem;
           cursor: pointer;
-          color: #00ff88;
           flex-shrink: 0;
-        }
-
-        .navbar-brand.terminal-style {
-          font-family: 'Courier New', monospace;
-          font-weight: bold;
-        }
-
-        .terminal-icon {
-          display: flex;
-          align-items: center;
-          gap: 0.1rem;
-          font-size: 1.5rem;
-          color: #00ff88;
-        }
-
-        .terminal-cursor {
-          animation: blink 1s infinite;
-        }
-
-        .terminal-underscore {
-          color: #00ff88;
-        }
-
-        @keyframes blink {
-          0%, 50% { opacity: 1; }
-          51%, 100% { opacity: 0; }
         }
 
         .brand-icon {
           display: flex;
           align-items: center;
           justify-content: center;
-          width: 2.75rem;
-          height: 2.75rem;
+          width: 3rem;
+          height: 3rem;
           background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-          border-radius: 12px;
+          border-radius: 16px;
           color: white;
-          box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+          box-shadow: 0 8px 25px rgba(59, 130, 246, 0.35);
+          transition: all 0.3s ease;
+        }
+
+        .brand-icon:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 12px 35px rgba(59, 130, 246, 0.45);
         }
 
         .brand-text h1 {
           font-size: 1.5rem;
           font-weight: 700;
           margin: 0;
-          color: #00ff88;
+          background: linear-gradient(135deg, #1e293b, #475569);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
           line-height: 1.2;
         }
 
         .brand-text span {
           font-size: 0.75rem;
-          color: #64748b;
-          font-weight: 500;
+          color: #3b82f6;
+          font-weight: 600;
           text-transform: uppercase;
-          letter-spacing: 0.8px;
+          letter-spacing: 1px;
           line-height: 1;
-        }
-
-        .navbar-center {
-          flex: 1;
-          display: flex;
-          justify-content: center;
-          max-width: 600px;
         }
 
         .navbar-nav {
           display: flex;
           align-items: center;
-          gap: 1rem;
+          gap: 0.5rem;
+          background: rgba(255, 255, 255, 0.7);
+          padding: 0.5rem;
+          border-radius: 20px;
+          border: 1px solid rgba(148, 163, 184, 0.2);
+          backdrop-filter: blur(10px);
         }
 
         .nav-link {
@@ -386,10 +367,10 @@ const Header = () => {
           align-items: center;
           gap: 0.5rem;
           padding: 0.75rem 1.25rem;
-          border-radius: 8px;
+          border-radius: 14px;
           background: none;
-          border: 1px solid transparent;
-          color: #4da6ff;
+          border: none;
+          color: #64748b;
           font-weight: 500;
           font-size: 0.875rem;
           cursor: pointer;
@@ -400,16 +381,16 @@ const Header = () => {
         }
 
         .nav-link:hover {
-          color: #66b3ff;
-          background-color: rgba(77, 166, 255, 0.1);
-          border-color: rgba(77, 166, 255, 0.2);
+          color: #3b82f6;
+          background: white;
+          box-shadow: 0 4px 15px rgba(59, 130, 246, 0.15);
           transform: translateY(-1px);
         }
 
         .nav-link.active {
-          color: #66b3ff;
-          background-color: rgba(77, 166, 255, 0.15);
-          border-color: rgba(77, 166, 255, 0.3);
+          color: #3b82f6;
+          background: white;
+          box-shadow: 0 6px 20px rgba(59, 130, 246, 0.2);
           font-weight: 600;
         }
 
@@ -424,50 +405,51 @@ const Header = () => {
           display: flex;
           align-items: center;
           gap: 0.5rem;
-          padding: 0.625rem 1rem;
-          border-radius: 10px;
+          padding: 0.75rem 1.25rem;
+          border-radius: 12px;
           background: none;
-          border: 1px solid transparent;
-          color: #4da6ff;
+          border: 1px solid rgba(148, 163, 184, 0.3);
+          color: #64748b;
           font-weight: 500;
           font-size: 0.875rem;
           cursor: pointer;
-          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           white-space: nowrap;
         }
 
         .auth-link:hover {
-          color: #66b3ff;
-          border-color: rgba(77, 166, 255, 0.2);
-          background-color: rgba(77, 166, 255, 0.05);
+          color: #3b82f6;
+          border-color: rgba(59, 130, 246, 0.4);
+          background: rgba(59, 130, 246, 0.05);
           transform: translateY(-1px);
+          box-shadow: 0 4px 15px rgba(59, 130, 246, 0.1);
         }
 
         .auth-link.active {
-          color: #66b3ff;
-          border-color: rgba(77, 166, 255, 0.3);
-          background-color: rgba(77, 166, 255, 0.1);
+          color: #3b82f6;
+          border-color: rgba(59, 130, 246, 0.5);
+          background: rgba(59, 130, 246, 0.1);
         }
 
         .auth-link.signup-btn {
-          background: linear-gradient(135deg, #4da6ff, #0066cc);
+          background: linear-gradient(135deg, #3b82f6, #1d4ed8);
           color: white;
           border: none;
           font-weight: 600;
-          box-shadow: 0 2px 8px rgba(77, 166, 255, 0.3);
+          box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
         }
 
         .auth-link.signup-btn:hover {
-          background: linear-gradient(135deg, #0066cc, #004499);
+          background: linear-gradient(135deg, #1d4ed8, #1e40af);
           transform: translateY(-2px);
-          box-shadow: 0 4px 16px rgba(77, 166, 255, 0.4);
+          box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
           color: white;
         }
 
         .auth-link.logout-btn:hover {
           color: #ef4444;
-          border-color: rgba(239, 68, 68, 0.3);
-          background-color: rgba(239, 68, 68, 0.1);
+          border-color: rgba(239, 68, 68, 0.4);
+          background: rgba(239, 68, 68, 0.05);
         }
 
         /* Get Started Dropdown Styles */
@@ -476,18 +458,18 @@ const Header = () => {
         }
 
         .auth-link.get-started-btn {
-          background: linear-gradient(135deg, #4da6ff, #0066cc);
+          background: linear-gradient(135deg, #3b82f6, #1d4ed8);
           color: white;
           border: none;
           font-weight: 600;
-          box-shadow: 0 4px 12px rgba(77, 166, 255, 0.3);
+          box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
           gap: 0.5rem;
         }
 
         .auth-link.get-started-btn:hover {
-          background: linear-gradient(135deg, #0066cc, #004499);
+          background: linear-gradient(135deg, #1d4ed8, #1e40af);
           transform: translateY(-2px);
-          box-shadow: 0 6px 20px rgba(77, 166, 255, 0.4);
+          box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
           color: white;
         }
 
@@ -497,11 +479,11 @@ const Header = () => {
           right: 0;
           margin-top: 0.5rem;
           background: white;
-          border-radius: 12px;
-          box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-          border: 1px solid rgba(0, 0, 0, 0.08);
+          border-radius: 16px;
+          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+          border: 1px solid rgba(148, 163, 184, 0.2);
           overflow: hidden;
-          min-width: 160px;
+          min-width: 180px;
           z-index: 1000;
         }
 
@@ -510,24 +492,24 @@ const Header = () => {
           align-items: center;
           gap: 0.75rem;
           width: 100%;
-          padding: 0.875rem 1.25rem;
+          padding: 1rem 1.25rem;
           border: none;
           background: none;
           color: #64748b;
           font-weight: 500;
           font-size: 0.875rem;
           cursor: pointer;
-          transition: all 0.2s ease;
+          transition: all 0.3s ease;
           text-align: left;
         }
 
         .dropdown-item:hover {
           color: #3b82f6;
-          background-color: rgba(59, 130, 246, 0.05);
+          background: rgba(59, 130, 246, 0.05);
         }
 
         .dropdown-item:not(:last-child) {
-          border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+          border-bottom: 1px solid rgba(148, 163, 184, 0.1);
         }
 
         /* Mobile Menu Styles */
@@ -535,56 +517,62 @@ const Header = () => {
           display: none;
           align-items: center;
           justify-content: center;
-          width: 2.5rem;
-          height: 2.5rem;
-          border: none;
-          background: none;
+          width: 2.75rem;
+          height: 2.75rem;
+          border: 1px solid rgba(148, 163, 184, 0.3);
+          background: white;
           color: #64748b;
           cursor: pointer;
-          border-radius: 8px;
-          transition: all 0.2s ease;
+          border-radius: 12px;
+          transition: all 0.3s ease;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         }
 
         .mobile-menu-toggle:hover {
           color: #3b82f6;
-          background-color: rgba(59, 130, 246, 0.1);
+          border-color: rgba(59, 130, 246, 0.4);
+          background: rgba(59, 130, 246, 0.05);
+          transform: translateY(-1px);
         }
 
         .mobile-menu {
           overflow: hidden;
-          border-top: 1px solid rgba(0, 0, 0, 0.08);
-          background: white;
+          border-top: 1px solid rgba(148, 163, 184, 0.2);
+          background: rgba(255, 255, 255, 0.95);
+          backdrop-filter: blur(10px);
         }
 
         .mobile-menu-content {
-          padding: 1rem 0;
+          padding: 1.5rem 0;
         }
 
         .mobile-auth-section {
           display: flex;
           flex-direction: column;
-          gap: 0.5rem;
+          gap: 0.75rem;
         }
 
         .mobile-auth-link {
           display: flex;
           align-items: center;
           gap: 0.75rem;
-          padding: 0.875rem 1.5rem;
+          padding: 1rem 1.5rem;
           border: none;
           background: none;
           color: #64748b;
           font-weight: 500;
           font-size: 0.875rem;
           cursor: pointer;
-          transition: all 0.2s ease;
+          transition: all 0.3s ease;
           text-align: left;
           width: 100%;
+          border-radius: 12px;
+          margin: 0 1rem;
         }
 
         .mobile-auth-link:hover {
           color: #3b82f6;
-          background-color: rgba(59, 130, 246, 0.05);
+          background: rgba(59, 130, 246, 0.05);
           transform: translateX(4px);
         }
 
@@ -592,8 +580,9 @@ const Header = () => {
           background: linear-gradient(135deg, #3b82f6, #1d4ed8);
           color: white;
           margin: 0.5rem 1.5rem;
-          border-radius: 10px;
+          border-radius: 12px;
           font-weight: 600;
+          box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
         }
 
         .mobile-auth-link.signup-btn:hover {
@@ -603,7 +592,7 @@ const Header = () => {
 
         .mobile-auth-link.logout-btn:hover {
           color: #ef4444;
-          background-color: rgba(239, 68, 68, 0.1);
+          background: rgba(239, 68, 68, 0.05);
         }
 
         /* Responsive Utilities */
@@ -624,10 +613,6 @@ const Header = () => {
           .navbar-content {
             gap: 1.5rem;
           }
-          
-          .navbar-center {
-            max-width: 400px;
-          }
         }
 
         @media (max-width: 768px) {
@@ -640,7 +625,7 @@ const Header = () => {
           }
 
           .navbar {
-            padding: 0.75rem 0 0;
+            padding: 1rem 0 0;
           }
           
           .navbar-content {
@@ -661,31 +646,33 @@ const Header = () => {
             width: 100%;
             justify-content: space-between;
             gap: 0.25rem;
-            background: rgba(248, 250, 252, 0.8);
-            padding: 0.375rem;
-            border-radius: 16px;
-            border: 1px solid rgba(0, 0, 0, 0.06);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 0.5rem;
+            border-radius: 20px;
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            backdrop-filter: blur(10px);
           }
 
           .nav-link {
-            padding: 0.75rem 0.75rem;
+            padding: 0.875rem 0.75rem;
             flex-direction: column;
             gap: 0.375rem;
             text-align: center;
             min-width: 0;
             flex: 1;
-            min-height: 60px;
+            min-height: 70px;
             border: none;
+            border-radius: 14px;
           }
 
           .nav-link:hover {
-            background-color: white;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            background: white;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.15);
           }
 
           .nav-link.active {
-            background-color: white;
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+            background: white;
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.2);
           }
 
           .nav-link span {
@@ -696,6 +683,10 @@ const Header = () => {
 
           .brand-text span {
             display: none;
+          }
+
+          .brand-text h1 {
+            font-size: 1.25rem;
           }
         }
 
@@ -718,8 +709,9 @@ const Header = () => {
           }
           
           .nav-link {
-            padding: 0.625rem 0.75rem;
+            padding: 0.75rem 0.5rem;
             min-width: 60px;
+            min-height: 65px;
           }
           
           .nav-link span {
