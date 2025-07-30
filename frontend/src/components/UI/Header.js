@@ -85,8 +85,9 @@ const Header = () => {
               </div>
             </motion.div>
 
-            {/* Navigation Links */}
-            <div className="navbar-center">
+            {/* Navigation Links + Auth Section - All on Right */}
+            <div className="navbar-right">
+              {/* Navigation Links */}
               <div className="navbar-nav">
                 {navigationItems.map((item) => {
                   const Icon = item.icon;
@@ -104,86 +105,86 @@ const Header = () => {
                   );
                 })}
               </div>
-            </div>
 
-            {/* Auth Section - Desktop */}
-            <div className="navbar-auth desktop-only">
-              {authItems.map((item, index) => {
-                const Icon = item.icon;
-                const isLogout = item.id === 'logout';
-                const isGetStarted = item.isGetStarted;
-                
-                if (isGetStarted) {
+              {/* Auth Section */}
+              <div className="navbar-auth desktop-only">
+                {authItems.map((item, index) => {
+                  const Icon = item.icon;
+                  const isLogout = item.id === 'logout';
+                  const isGetStarted = item.isGetStarted;
+                  
+                  if (isGetStarted) {
+                    return (
+                      <div key={item.id} className="get-started-container" ref={dropdownRef}>
+                        <motion.button
+                          className="auth-link get-started-btn"
+                          onClick={() => handleNavClick(item)}
+                          whileHover={{ y: -2 }}
+                          whileTap={{ scale: 0.96 }}
+                          initial={{ opacity: 0, x: 20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: index * 0.1 }}
+                        >
+                          <Icon className="w-4 h-4" />
+                          <span>{item.label}</span>
+                          <ChevronDownIcon className={`w-4 h-4 transition-transform ${isGetStartedOpen ? 'rotate-180' : ''}`} />
+                        </motion.button>
+                        
+                        <AnimatePresence>
+                          {isGetStartedOpen && (
+                            <motion.div
+                              className="get-started-dropdown"
+                              initial={{ opacity: 0, y: -10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: -10 }}
+                              transition={{ duration: 0.2 }}
+                            >
+                              <motion.button
+                                className="dropdown-item"
+                                onClick={() => {
+                                  setActivePage('login');
+                                  setIsGetStartedOpen(false);
+                                }}
+                                whileHover={{ x: 4 }}
+                              >
+                                <UserIcon className="w-4 h-4" />
+                                <span>Login</span>
+                              </motion.button>
+                              <motion.button
+                                className="dropdown-item"
+                                onClick={() => {
+                                  setActivePage('signup');
+                                  setIsGetStartedOpen(false);
+                                }}
+                                whileHover={{ x: 4 }}
+                              >
+                                <UserPlusIcon className="w-4 h-4" />
+                                <span>Sign Up</span>
+                              </motion.button>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    );
+                  }
+                  
                   return (
-                    <div key={item.id} className="get-started-container" ref={dropdownRef}>
-                      <motion.button
-                        className="auth-link get-started-btn"
-                        onClick={() => handleNavClick(item)}
-                        whileHover={{ y: -2 }}
-                        whileTap={{ scale: 0.96 }}
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: index * 0.1 }}
-                      >
-                        <Icon className="w-4 h-4" />
-                        <span>{item.label}</span>
-                        <ChevronDownIcon className={`w-4 h-4 transition-transform ${isGetStartedOpen ? 'rotate-180' : ''}`} />
-                      </motion.button>
-                      
-                      <AnimatePresence>
-                        {isGetStartedOpen && (
-                          <motion.div
-                            className="get-started-dropdown"
-                            initial={{ opacity: 0, y: -10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -10 }}
-                            transition={{ duration: 0.2 }}
-                          >
-                            <motion.button
-                              className="dropdown-item"
-                              onClick={() => {
-                                setActivePage('login');
-                                setIsGetStartedOpen(false);
-                              }}
-                              whileHover={{ x: 4 }}
-                            >
-                              <UserIcon className="w-4 h-4" />
-                              <span>Login</span>
-                            </motion.button>
-                            <motion.button
-                              className="dropdown-item"
-                              onClick={() => {
-                                setActivePage('signup');
-                                setIsGetStartedOpen(false);
-                              }}
-                              whileHover={{ x: 4 }}
-                            >
-                              <UserPlusIcon className="w-4 h-4" />
-                              <span>Sign Up</span>
-                            </motion.button>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
+                    <motion.button
+                      key={item.id}
+                      className={`auth-link ${activePage === item.id ? 'active' : ''} ${isLogout ? 'logout-btn' : ''}`}
+                      onClick={() => handleNavClick(item)}
+                      whileHover={{ y: -2 }}
+                      whileTap={{ scale: 0.96 }}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                    >
+                      <Icon className="w-4 h-4" />
+                      <span>{item.label}</span>
+                    </motion.button>
                   );
-                }
-                
-                return (
-                  <motion.button
-                    key={item.id}
-                    className={`auth-link ${activePage === item.id ? 'active' : ''} ${isLogout ? 'logout-btn' : ''}`}
-                    onClick={() => handleNavClick(item)}
-                    whileHover={{ y: -2 }}
-                    whileTap={{ scale: 0.96 }}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                  >
-                    <Icon className="w-4 h-4" />
-                    <span>{item.label}</span>
-                  </motion.button>
-                );
-              })}
+                })}
+              </div>
             </div>
 
             {/* Mobile Menu Toggle */}
@@ -295,6 +296,14 @@ const Header = () => {
           min-height: 4rem;
         }
 
+        .navbar-right {
+          display: flex;
+          align-items: center;
+          gap: 1.5rem;
+          flex: 1;
+          justify-content: flex-end;
+        }
+
         .navbar-brand {
           display: flex;
           align-items: center;
@@ -346,22 +355,17 @@ const Header = () => {
         .navbar-nav {
           display: flex;
           align-items: center;
-          gap: 0.5rem;
-          background: rgba(248, 250, 252, 0.8);
-          padding: 0.5rem;
-          border-radius: 16px;
-          border: 1px solid rgba(0, 0, 0, 0.06);
-          backdrop-filter: blur(10px);
+          gap: 1rem;
         }
 
         .nav-link {
           display: flex;
           align-items: center;
           gap: 0.75rem;
-          padding: 0.75rem 1.5rem;
+          padding: 0.75rem 1.25rem;
           border-radius: 12px;
           background: none;
-          border: none;
+          border: 1px solid transparent;
           color: #64748b;
           font-weight: 500;
           font-size: 0.875rem;
@@ -374,22 +378,22 @@ const Header = () => {
 
         .nav-link:hover {
           color: #3b82f6;
-          background-color: white;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+          background-color: rgba(59, 130, 246, 0.1);
+          border-color: rgba(59, 130, 246, 0.2);
           transform: translateY(-1px);
         }
 
         .nav-link.active {
           color: #3b82f6;
-          background-color: white;
-          box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+          background-color: rgba(59, 130, 246, 0.1);
+          border-color: rgba(59, 130, 246, 0.3);
           font-weight: 600;
         }
 
         .navbar-auth {
           display: flex;
           align-items: center;
-          gap: 0.75rem;
+          gap: 1rem;
           flex-shrink: 0;
         }
 
@@ -617,20 +621,27 @@ const Header = () => {
           }
           
           .navbar-content {
+            flex-direction: column;
+            gap: 1rem;
             min-height: auto;
           }
 
-          .navbar-center {
+          .navbar-right {
             order: 2;
-            max-width: 100%;
-            margin-bottom: 0.75rem;
+            width: 100%;
+            justify-content: center;
+            flex-direction: column;
+            gap: 1rem;
           }
 
           .navbar-nav {
             width: 100%;
             justify-content: space-between;
-            padding: 0.375rem;
             gap: 0.25rem;
+            background: rgba(248, 250, 252, 0.8);
+            padding: 0.375rem;
+            border-radius: 16px;
+            border: 1px solid rgba(0, 0, 0, 0.06);
           }
 
           .nav-link {
@@ -641,6 +652,17 @@ const Header = () => {
             min-width: 0;
             flex: 1;
             min-height: 60px;
+            border: none;
+          }
+
+          .nav-link:hover {
+            background-color: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+          }
+
+          .nav-link.active {
+            background-color: white;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
           }
 
           .nav-link span {
