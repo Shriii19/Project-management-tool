@@ -1,23 +1,17 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React from 'react';
+import { motion } from 'framer-motion';
 import { 
   HomeIcon, 
   ClipboardDocumentListIcon, 
   InformationCircleIcon,
   UserIcon,
   UserPlusIcon,
-  ArrowRightOnRectangleIcon,
-  Bars3Icon,
-  XMarkIcon,
-  ChevronDownIcon
+  ArrowRightOnRectangleIcon
 } from '@heroicons/react/24/outline';
 import { useApp } from '../../context/AppContext';
 
 const Header = () => {
   const { activePage, setActivePage, isAuthenticated, user, logout } = useApp();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isGetStartedOpen, setIsGetStartedOpen] = useState(false);
-  const dropdownRef = useRef(null);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -34,9 +28,10 @@ const Header = () => {
   }, []);
 
   const navigationItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: HomeIcon },
-    { id: 'tasks', label: 'Tasks', icon: ClipboardDocumentListIcon },
-    { id: 'about', label: 'About', icon: InformationCircleIcon }
+    { id: 'dashboard', label: 'Home', icon: HomeIcon },
+    { id: 'about', label: 'About', icon: InformationCircleIcon },
+    { id: 'tasks', label: 'Projects', icon: ClipboardDocumentListIcon },
+    { id: 'contact', label: 'Contact', icon: UserIcon }
   ];
 
   const authItems = isAuthenticated 
@@ -69,19 +64,19 @@ const Header = () => {
       <nav className="navbar">
         <div className="container">
           <div className="navbar-content">
-            {/* Logo/Brand */}
+            {/* Logo/Brand - Terminal Style */}
             <motion.div 
-              className="navbar-brand"
+              className="navbar-brand terminal-style"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => setActivePage('dashboard')}
             >
-              <div className="brand-icon">
-                <ClipboardDocumentListIcon className="w-7 h-7" />
+              <div className="terminal-icon">
+                <span className="terminal-cursor">►</span>
+                <span className="terminal-underscore">_</span>
               </div>
               <div className="brand-text">
-                <h1>ProjectFlow</h1>
-                <span>Task Management</span>
+                <h1>PM</h1>
               </div>
             </motion.div>
 
@@ -272,10 +267,9 @@ const Header = () => {
           position: sticky;
           top: 0;
           z-index: 50;
-          background: rgba(255, 255, 255, 0.98);
-          backdrop-filter: blur(20px);
-          border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-          box-shadow: 0 1px 20px rgba(0, 0, 0, 0.08);
+          background: #1a1a2e;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
         }
 
         .navbar {
@@ -307,10 +301,36 @@ const Header = () => {
         .navbar-brand {
           display: flex;
           align-items: center;
-          gap: 0.875rem;
+          gap: 0.5rem;
           cursor: pointer;
-          color: var(--primary-color);
+          color: #00ff88;
           flex-shrink: 0;
+        }
+
+        .navbar-brand.terminal-style {
+          font-family: 'Courier New', monospace;
+          font-weight: bold;
+        }
+
+        .terminal-icon {
+          display: flex;
+          align-items: center;
+          gap: 0.1rem;
+          font-size: 1.5rem;
+          color: #00ff88;
+        }
+
+        .terminal-cursor {
+          animation: blink 1s infinite;
+        }
+
+        .terminal-underscore {
+          color: #00ff88;
+        }
+
+        @keyframes blink {
+          0%, 50% { opacity: 1; }
+          51%, 100% { opacity: 0; }
         }
 
         .brand-icon {
@@ -326,13 +346,10 @@ const Header = () => {
         }
 
         .brand-text h1 {
-          font-size: 1.375rem;
+          font-size: 1.5rem;
           font-weight: 700;
           margin: 0;
-          background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
+          color: #00ff88;
           line-height: 1.2;
         }
 
@@ -361,12 +378,12 @@ const Header = () => {
         .nav-link {
           display: flex;
           align-items: center;
-          gap: 0.75rem;
+          gap: 0.5rem;
           padding: 0.75rem 1.25rem;
-          border-radius: 12px;
+          border-radius: 8px;
           background: none;
           border: 1px solid transparent;
-          color: #64748b;
+          color: #4da6ff;
           font-weight: 500;
           font-size: 0.875rem;
           cursor: pointer;
@@ -377,16 +394,16 @@ const Header = () => {
         }
 
         .nav-link:hover {
-          color: #3b82f6;
-          background-color: rgba(59, 130, 246, 0.1);
-          border-color: rgba(59, 130, 246, 0.2);
+          color: #66b3ff;
+          background-color: rgba(77, 166, 255, 0.1);
+          border-color: rgba(77, 166, 255, 0.2);
           transform: translateY(-1px);
         }
 
         .nav-link.active {
-          color: #3b82f6;
-          background-color: rgba(59, 130, 246, 0.1);
-          border-color: rgba(59, 130, 246, 0.3);
+          color: #66b3ff;
+          background-color: rgba(77, 166, 255, 0.15);
+          border-color: rgba(77, 166, 255, 0.3);
           font-weight: 600;
         }
 
@@ -405,7 +422,7 @@ const Header = () => {
           border-radius: 10px;
           background: none;
           border: 1px solid transparent;
-          color: #64748b;
+          color: #4da6ff;
           font-weight: 500;
           font-size: 0.875rem;
           cursor: pointer;
@@ -414,30 +431,30 @@ const Header = () => {
         }
 
         .auth-link:hover {
-          color: #3b82f6;
-          border-color: rgba(59, 130, 246, 0.2);
-          background-color: rgba(59, 130, 246, 0.05);
+          color: #66b3ff;
+          border-color: rgba(77, 166, 255, 0.2);
+          background-color: rgba(77, 166, 255, 0.05);
           transform: translateY(-1px);
         }
 
         .auth-link.active {
-          color: #3b82f6;
-          border-color: rgba(59, 130, 246, 0.3);
-          background-color: rgba(59, 130, 246, 0.1);
+          color: #66b3ff;
+          border-color: rgba(77, 166, 255, 0.3);
+          background-color: rgba(77, 166, 255, 0.1);
         }
 
         .auth-link.signup-btn {
-          background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+          background: linear-gradient(135deg, #4da6ff, #0066cc);
           color: white;
           border: none;
           font-weight: 600;
-          box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+          box-shadow: 0 2px 8px rgba(77, 166, 255, 0.3);
         }
 
         .auth-link.signup-btn:hover {
-          background: linear-gradient(135deg, #1d4ed8, #1e40af);
+          background: linear-gradient(135deg, #0066cc, #004499);
           transform: translateY(-2px);
-          box-shadow: 0 4px 16px rgba(59, 130, 246, 0.4);
+          box-shadow: 0 4px 16px rgba(77, 166, 255, 0.4);
           color: white;
         }
 
@@ -453,18 +470,18 @@ const Header = () => {
         }
 
         .auth-link.get-started-btn {
-          background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+          background: linear-gradient(135deg, #4da6ff, #0066cc);
           color: white;
           border: none;
           font-weight: 600;
-          box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+          box-shadow: 0 4px 12px rgba(77, 166, 255, 0.3);
           gap: 0.5rem;
         }
 
         .auth-link.get-started-btn:hover {
-          background: linear-gradient(135deg, #1d4ed8, #1e40af);
+          background: linear-gradient(135deg, #0066cc, #004499);
           transform: translateY(-2px);
-          box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+          box-shadow: 0 6px 20px rgba(77, 166, 255, 0.4);
           color: white;
         }
 
