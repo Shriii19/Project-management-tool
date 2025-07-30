@@ -1,17 +1,23 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   HomeIcon, 
   ClipboardDocumentListIcon, 
   InformationCircleIcon,
   UserIcon,
   UserPlusIcon,
-  ArrowRightOnRectangleIcon
+  ArrowRightOnRectangleIcon,
+  Bars3Icon,
+  XMarkIcon,
+  ChevronDownIcon
 } from '@heroicons/react/24/outline';
 import { useApp } from '../../context/AppContext';
 
 const Header = () => {
   const { activePage, setActivePage, isAuthenticated, user, logout } = useApp();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isGetStartedOpen, setIsGetStartedOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
   // Close dropdown when clicking outside
   useEffect(() => {
