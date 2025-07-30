@@ -32,7 +32,7 @@ const Header = () => {
   const navigationItems = [
     { id: 'dashboard', label: 'Home', icon: HomeIcon },
     { id: 'about', label: 'About', icon: InformationCircleIcon },
-    { id: 'tasks', label: 'Projects', icon: ClipboardDocumentListIcon },
+    { id: 'tasks', label: 'Tasks', icon: ClipboardDocumentListIcon },
     { id: 'contact', label: 'Contact', icon: UserIcon }
   ];
 
